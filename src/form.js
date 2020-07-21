@@ -1,83 +1,97 @@
-import React,{useState} from "react";
-import Swal from "sweetalert2";
-import axios from 'axios';
+import React, { useState } from "react";
 
-const Form=()=>{
-    const [email, setEmail] = useState("");
-    const [pass, setPassword] = useState("");
-    const viewUser = async (e) => {
-        try {
-          e.preventDefault();
-          const emailck = { email };
-          const password={pass};
-          const userObject = {
-            email:"sfsfds",
-            pass:"sfsdfsdf"
-        };
-        // const register = await axios({
-        //     method: 'post',
-        //     url: 'http://localhost:5000/signup',
-        //     data: {
-        //       email:"qwertyu@gmail.com",
-        //       password: "123"
-        //     }
-        //   });
-        //   console.log(register);
- 
-          await axios.post('http://localhost:5000/signup', userObject)
-            .then((res) => {
-                console.log(res.data)
-            }).catch((error) => {
-                console.log(error)
-            });
-         // const response = await client.request(USER_EXISTS_QUERY, emailck);
-        //   if (response.userExists) {
-        //     Swal.fire({
-        //       icon: "success",
-        //       title: "Great",
-        //       text: "Thank You!",
-        //     });
-        //   } else {
-        //     Swal.fire({
-        //       icon: "error",
-        //       title: "Opps...",
-        //       text: "Please register with us!",
-        //     });
-        //   }
-          //console.log({ response });
-        } catch (err) {
-          console.log(err);
-        }
-      };
+const Form = ({ isFormVisible, setFormVisibility }) => {
+  const [website, setWebsite] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-    return (
-    <form className="container" onSubmit={viewUser}>
-      <div className="form-group">
-        <label htmlFor="exampleInputEmail1">Email address</label>
-        <input
-          type="email"
-          className="form-control"
-          id="exampleInputEmail1"
-          aria-describedby="emailHelp"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
-        <label htmlFor="exampleInputEmail1">Password</label>
-        <input
-          type="password"
-          className="form-control"
-          id="exampleInputPassword"
-          aria-describedby="passwordHelp"
-          value={pass}
-          onChange={e => setPassword(e.target.value)}
-        />
+  const clearForm = () => {
+    setWebsite("");
+    setUsername("");
+    setPassword("");
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDeafult();
+    const data = { website, username, password };
+    console.log({ data });
+  };
+
+  return (
+    <div class={`modal ${isFormVisible ? "is-active" : ""}`}>
+      <div
+        class="modal-background"
+        onClick={() => setFormVisibility(false)}
+      ></div>
+      <div class="modal-content">
+        <div class="card">
+          <div class="card-content">
+            <form onSubmit={handleFormSubmit}>
+              <div class="field">
+                <label class="label">Website</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    type="text"
+                    value={website}
+                    onChange={(e) => setWebsite(e.target.value)}
+                    placeholder="www.google.com"
+                  />
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label">Username</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="john.doe"
+                  />
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label">Password</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="password"
+                  />
+                </div>
+              </div>
+            </form>
+          </div>
+          <footer class="card-footer">
+            <p class="card-footer-item">
+              <span>
+                <button class="button is-link" type="submit">
+                  Submit
+                </button>
+              </span>
+            </p>
+            <p class="card-footer-item">
+              <span>
+                <button class="button is-danger" onClick={clearForm}>
+                  Clear
+                </button>
+              </span>
+            </p>
+          </footer>
+        </div>
       </div>
-      <button type="submit" className="btn btn-primary">
-        Submit
-      </button>
-    </form>
-    );
-
-}
+      <button
+        class="modal-close is-large"
+        aria-label="close"
+        onClick={() => setFormVisibility(false)}
+      ></button>
+    </div>
+  );
+};
 
 export default Form;

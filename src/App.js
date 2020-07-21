@@ -1,114 +1,105 @@
-import React, { useState } from "react";
-import { USER_EXISTS_QUERY } from "./graphql/queries";
-import { LINK_GENERATE_MUTATION } from "./graphql/mutation";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Typography from "@material-ui/core/Typography";
-import Container from "@material-ui/core/Container";
-import Button from "@material-ui/core/Button";
-import { useHistory } from "react-router-dom";
-import { useClient } from "./client";
-import Swal from "sweetalert2";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import { makeStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
-const App = () => {
-  const history = useHistory();
-  const client = useClient();
-  const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import axios from 'axios';
 
-  const goToChat = async (e) => {
-    history.push("/chat/" + code, { email });
-  };
-  const viewUser = async (e) => {
-    try {
-      e.preventDefault();
-      const emailck = { email };
-      const response = await client.request(USER_EXISTS_QUERY, emailck);
-      if (response.userExists) {
-        Swal.fire({
-          icon: "success",
-          title: "Great",
-          text: "Thank You!",
-        });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Opps...",
-          text: "Please register with us!",
-        });
-      }
-      console.log({ response });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  const sendLink = async (e) => {
-    try {
-      e.preventDefault();
-      const nlink = await client.request(LINK_GENERATE_MUTATION);
-      console.log(nlink.linkGenerate);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  return (
-    /* <form className="container" onSubmit={viewUser}>
-      <div className="form-group">
-        <label htmlFor="exampleInputEmail1">Email address</label>
-        <input
-          type="email"
-          className="form-control"
-          id="exampleInputEmail1"
-          aria-describedby="emailHelp"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
-        <small id="emailHelp" className="form-text text-muted" >
-          Check that you are registered with us or not!
-        </small>
-      </div>
-      <button type="submit" className="btn btn-primary">
-        Submit
-      </button>
-    </form> */
-    <Container maxWidth="sm">
-      <center
-        style={{
-          margin: "auto",
-          position: "absolute",
-          top: "50%",
-        }}
-      >
-        <Card variant="outlined">
-          <CardContent>
-            {" "}
-            <div>
-              <TextField
-                required
-                id="standard-required"
-                label="Enter the Code"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-              />
-              {"  "}
-              <TextField
-                required
-                id="standard-required"
-                label="Enter the Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              {"  "}
-              <Button variant="contained" color="success" onClick={goToChat}>
-                Go to Chat
-              </Button>
+import Form from "./Form";
+
+
+const renderCards = (data) => (
+  <div className="columns is-multiline">
+    {data.map((e, i) => (
+      <div className="column is-4" key={i}>
+        <div className="card">
+          <header className="card-header is-shadowless">
+            <p className="card-header-title">{e.website}</p>
+            {/* <a href="#" className="card-header-icon" aria-label="more options">
+              <span className="icon">
+                <i className="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </a> */}
+          </header>
+          <div className="card-content">
+            <div className="content">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                  <label class="label is-family-monospace">Username</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <div class="control has-icons-left">
+                      <input
+                        class="input"
+                        type="text"
+                        value={e.username}
+                        disabled
+                      />
+                      <span class="icon is-small is-left">
+                        <i class="fas fa-envelope"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                  <label class="label is-family-monospace">Password</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <div class="control has-icons-left">
+                      <input
+                        class="input"
+                        type="text"
+                        value={e.password}
+                        disabled
+                      />
+                      <span class="icon is-small is-left">
+                        <i class="fas fa-envelope"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </CardContent>
-        </Card>
-      </center>
-    </Container>
+          </div>
+          <footer className="card-footer has-text-right" style={{ border: 0 }}>
+            <a href="#" className="card-footer-item">
+              Delete
+            </a>
+          </footer>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+const App = () => {
+  const [isLoading, setLoadingStatus] = useState(true);
+  const [data, setData] = useState([]);
+  const [isFormVisible, setFormVisibility] = useState(false);
+
+  useEffect(() => {
+    axios.get('http://localhost:5000/sites/user/:id')
+    .then(function (response) {
+      setData(response);
+      setLoadingStatus(false);
+    })
+  }, []);
+
+  return (
+    <div className="App">
+      <div className="container has-text-centered">
+        {isLoading ? <div>Loading...</div> : renderCards(data)}
+
+        <button
+          className="button is-link is-light"
+          onClick={() => setFormVisibility(true)}
+        >
+          Add more
+        </button>
+      </div>
+      <Form {...{ isFormVisible, setFormVisibility }} />
+    </div>
   );
 };
 

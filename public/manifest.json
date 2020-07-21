@@ -1,6 +1,6 @@
 {
-  "short_name": "Cab Pool",
-  "name": "Cab Pool",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",
