@@ -79,7 +79,7 @@ const App = () => {
   const [isFormVisible, setFormVisibility] = useState(false);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/sites/user/:id')
+    axios.get('http://localhost:5000/sites/user/9')
     .then(function (response) {
       setData(response);
       setLoadingStatus(false);
