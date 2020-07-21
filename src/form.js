@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import axios from 'axios';
 const Form = ({ isFormVisible, setFormVisibility }) => {
   const [website, setWebsite] = useState("");
   const [username, setUsername] = useState("");
@@ -11,10 +11,21 @@ const Form = ({ isFormVisible, setFormVisibility }) => {
     setPassword("");
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async(e) => {
     e.preventDeafult();
-    const data = { website, username, password };
-    console.log({ data });
+    //const data = { website, username, password };
+    const register = await axios({
+      method: 'post',
+      url: 'http://localhost:5000/sites/9',
+      data: {
+        userid:9,
+        password: password,
+        username:username,
+        website:website
+      }
+    });
+    console.log(register.data);
+    //console.log({ data });
   };
 
   return (
